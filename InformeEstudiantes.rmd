@@ -1,0 +1,586 @@
+---
+title: "Informe de Evaluación Docente"
+author: "Unidad de Estudio y Seguimiento"
+date: "`r Sys.Date()`"
+output: 
+  word_document:
+    reference: reference.docx
+---
+
+```{r setup, include=FALSE}
+rm(list = ls())
+
+
+# Librerias ---------------------------------------------------------------
+
+library(kableExtra)
+library(tidyverse)
+library(tidyr)
+library(writexl)
+library(readr)
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(janitor)
+library(hrbrthemes)
+library(tidytext)
+library(wordcloud2)
+library(wordcloud)
+library(syuzhet)
+library(patchwork)
+library(pdftools)
+library(tm)
+library(textdata)
+library(stringr)
+library(ggthemes)
+
+
+# Importación de datos ----------------------------------------------------
+
+ruta_absoluta <- file.path("H:\\6.-Universidad Arturo Prat - Python\\Evaluación Docente 2022\\Resultados\\Estudiantes2023.xlsx")
+
+data <- read_xlsx(ruta_absoluta)
+
+# Filtro tipo de actividad curricular ----------------------------------------------------------
+
+data <- data %>% mutate(
+  clasificacion_actividad =case_when(
+    str_detect(codigo_actividad,"^FH")~"Licenciatura de FCH",
+    str_detect(codigo_actividad, "^DD|^DR")~ "Electivos de Formación General",
+    str_detect(codigo_actividad, "^FIA")~"Plan común FIA",
+    str_detect(codigo_actividad, "^FR1|^FR3")~"Plan común FAREN",
+    str_detect(codigo_actividad, "^PII")~"Programa Institiucional de Inglés",
+    TRUE ~ "NORMAL"
+  )
+)
+
+data <- data %>% mutate(
+  clasificacion_mediador = case_when(
+    finalizado == 0 ~ "No Evaluado",
+    T ~ clasificacion_mediador
+  )
+)
+
+data <- data %>% mutate(
+  clasificacion_gestion = case_when(
+    finalizado == 0 ~ "No Evaluado",
+    T ~ clasificacion_gestion
+  )
+)
+
+# Seleccionamos la Carrera a analizar -------------------------------------
+
+
+carrera <- data %>% filter(codigo_carrera == 2363,clasificacion_actividad=="NORMAL")
+
+
+# Recuento de Participación de Estudiantes --------------------------------
+
+recuentoparticipacion <- carrera %>% group_by(codigo_carrera) %>% summarise(
+  finalizado = sum(finalizado),
+  no_participa = sum(no_participa),
+  pendiente = sum(pendiente),
+  no_iniciada = sum(no_iniciada)
+) %>% 
+  pivot_longer(
+    cols = c(finalizado,no_participa,pendiente,no_iniciada),
+    names_to = "estado",
+    values_to = "recuento"
+  ) %>% 
+  select(-codigo_carrera) %>% 
+  mutate(porcentaje = round(recuento/sum(recuento)*100,2)) %>% 
+  mutate(
+    estado = case_when(
+      estado == "finalizado"~"Finalizado",
+      estado == "no_participa"~ "No participa",
+      estado == "pendiente"~"Pendiente",
+      estado == "no_iniciada"~"No iniciada"
+    ))
+
+# Gráfico de Participación ------------------------------------------------
+
+grafico_participacion <- recuentoparticipacion %>% 
+  ggplot(aes(x=estado,y=recuento))+
+  geom_col(fill="#294F5F")+
+  geom_text(aes(label=recuento),nudge_y = 15)+
+  labs(
+    title = "Recuento de Encuestas por Estado",
+    subtitle = "Encuesta de Estudiantes",
+    y = "Recuento",
+    x = "Estado de Encuesta",
+    caption = "Fuente: Bases de Datos Reportes Genéricos | Estudiantes"
+  )+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    axis.line = element_line(color = "black"),
+    axis.text = element_text(color = "black", face = "italic")
+    ) 
+
+
+# Tabla de Participación --------------------------------------------------
+recuentoparticipacion$porcentaje <- round(recuentoparticipacion$porcentaje,1)
+
+
+tablaresumen <- recuentoparticipacion %>% kable(
+  caption = "Tabla de Resumen",
+  col.names = c("Estado","Recuento","Porcentaje"),
+  align = c("l","l","l"),
+  format = "pipe",
+  booktabs = T)
+
+
+# Promedio de Competencias ------------------------------------------------
+
+
+resumenCompetencias <- carrera %>% summarise(
+  gestion = sum(gestion)/nrow(carrera),
+  mediador = sum(mediador)/nrow(carrera)
+) %>% pivot_longer(
+  cols = c(gestion,mediador),
+  names_to = "competencia",
+  values_to = "promedio"
+)
+
+
+
+graficoCompetencias <- resumenCompetencias %>% ggplot(aes(x=competencia,y=promedio))+
+  geom_col(fill="#F06D53")+
+  geom_text(aes(label=round(promedio,2)),nudge_y = 0.1)+
+  labs(
+    title = "Resultados promedio de Competencias",
+    subtitle = "Encuesta de Estudiantes",
+    y = "Promedio",
+    x = "Competencia",
+    caption = "Fuente: Bases de Datos Reportes Genéricos | Estudiantes"
+  )+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    axis.line = element_line(color = "black"),
+    axis.text = element_text(color = "black", face = "italic")
+  ) +
+  ylim(0,3)
+  
+resumenCompetencias$promedio <- round(resumenCompetencias$promedio,2)
+
+
+tablacompetencias <- resumenCompetencias %>% kable(
+  caption = "Tabla de Resumen",
+  col.names = c("Competencia","Promedio"),
+  align = c("l","r"),
+  format = "pipe",
+  booktabs = T)
+
+
+# Clasificación Mediador Bruto--------------------------------------------------
+
+MediadorTab <- carrera %>% group_by(clasificacion_mediador) %>% count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(n/sum(n)*100,2)) %>% 
+  group_by(clasificacion_mediador) %>% 
+  rename(
+    "Clasificación"= "clasificacion_mediador",
+    "Recuento" = "n",
+    "Porcentaje" = "porcentaje"
+  )
+
+GraficoClasificacionMediador <- MediadorTab %>% ggplot(aes(x=Clasificación,y=Recuento))+
+  geom_col(fill="#699ECB") + 
+  geom_text(aes(label=Recuento), nudge_y = 1)+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    axis.line = element_line(color = "black"),
+    axis.text = element_text(color = "black", face = "italic")
+  )+
+  labs(
+    title = "Recuento de Docentes por Clasificación de Competencia Mediador",
+    subtitle = "Encuesta de Estudiantes",
+    y = "Recuento",
+    x = "Clasificación",
+    caption = "Fuente: Bases de Datos Reportes Genéricos | Estudiantes"
+  )
+
+# Clasificación Mediador Depurado -----------------------------------------
+
+MediadorTABdepurado <- carrera %>% filter(finalizado>0) %>% group_by(clasificacion_mediador) %>% count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(n/sum(n)*100,2)) %>% 
+  group_by(clasificacion_mediador) %>% 
+  rename(
+    "Clasificación"= "clasificacion_mediador",
+    "Recuento" = "n",
+    "Porcentaje" = "porcentaje"
+  )
+
+GraficoMediadorDepurado <- MediadorTABdepurado %>% ggplot(aes(x=Clasificación,y=Recuento))+
+  geom_col(fill="#699ECB") + 
+  geom_text(aes(label=Recuento), nudge_y = 1)+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    axis.line = element_line(color = "black"),
+    axis.text = element_text(color = "black", face = "italic")
+  )+
+  labs(
+    title = "Recuento de Docentes por Clasificación de Competencia Mediador (Depurado)",
+    subtitle = "Encuesta de Estudiantes",
+    y = "Recuento",
+    x = "Clasificación",
+    caption = "Fuente: Bases de Datos Reportes Genéricos | Estudiantes"
+  )
+
+
+MediadorTABdepurado$Porcentaje <- round(MediadorTABdepurado$Porcentaje,1)
+
+MediadorTABdepurado <- MediadorTABdepurado %>% kbl(caption = "Tabla de Resumen: Competencia Mediador",
+                                                   col.names =c("Clasificación","Recuento","Porcentaje"),
+                                                   align = c("l","l","r"),
+                                                   format = "pipe",
+                                                   booktabs = T)
+
+# Clasificación Gestion Bruto ---------------------------------------------
+
+
+GestionTab <- carrera %>% group_by(clasificacion_gestion) %>% count() %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(n/sum(n)*100,2)) %>% 
+  group_by(clasificacion_gestion) %>% 
+  rename(
+    "Clasificación"= "clasificacion_gestion",
+    "Recuento" = "n",
+    "Porcentaje" = "porcentaje"
+  )
+
+GraficoCompetenciaGestion <- GestionTab %>% ggplot(aes(x=Clasificación,y=Recuento))+
+  geom_col(fill="#4BBB8A") + 
+  geom_text(aes(label=Recuento), nudge_y = 1)+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    axis.line = element_line(color = "black"),
+    axis.text = element_text(color = "black", face = "italic")
+  )+
+  labs(
+    title = "Recuento de Docentes por Clasificación de Competencia Gestión",
+    subtitle = "Encuesta de Estudiantes",
+    y = "Recuento",
+    x = "Clasificación",
+    caption = "Fuente: Bases de Datos Reportes Genéricos | Estudiantes"
+  )
+
+
+# Clasificación Gestión Depurado ----------------------------------------------------------------------------------
+
+GestionTabDepurado <- carrera %>% filter(finalizado>0) %>% group_by(clasificacion_gestion) %>% count() %>%
+  ungroup() %>% 
+  mutate(porcentaje = round(n/sum(n)*100,2)) %>% 
+  group_by(clasificacion_gestion) %>% rename(
+    "Clasificación"= "clasificacion_gestion",
+    "Recuento" = "n",
+    "Porcentaje" = "porcentaje"
+    )
+
+GraficoCompetenciaGestionDepurado <- GestionTabDepurado %>% ggplot(aes(x=Clasificación,y=Recuento))+
+  geom_col(fill="#4BBB8A") + 
+  geom_text(aes(label=Recuento), nudge_y = 1)+
+  theme(
+    panel.background = element_rect(fill = "white"),
+    axis.line = element_line(color = "black"),
+    axis.text = element_text(color = "black", face = "italic")
+  )+
+  labs(
+    title = "Recuento de Docentes por Clasificación de Competencia Gestión",
+    subtitle = "Encuesta de Estudiantes",
+    y = "Recuento",
+    x = "Clasificación",
+    caption = "Fuente: Bases de Datos Reportes Genéricos | Estudiantes"
+  )
+
+GestionTabDepurado$Porcentaje <- round(GestionTabDepurado$Porcentaje,1)
+
+GestionTabDepurado <- GestionTabDepurado %>% kbl(caption = "Tabla de Resumen: Gestión Administrativa",
+                                                   col.names =c("Clasificación","Recuento","Porcentaje"),
+                                                   align = c("l","l","r"),
+                                                   format = "pipe",
+                                                   booktabs = T)
+
+# Datos -----------------------------------------------------------------------------------------------------------
+
+# Número total de Docentes en la carrera que fueron evaluados
+TotalDocentes <- carrera %>% select(rut_docente,codigo_actividad,paralelo,tipo_asig) %>% unique() %>% count() %>%
+  as.integer()
+
+# Número de docentes que tienen en su encuesta un número de encuestas mayor a 0
+DocentesF <- carrera %>% select(rut_docente,codigo_actividad,paralelo,tipo_asig,finalizado) %>% filter(finalizado>0) %>% 
+  unique() %>% count() %>% as.integer()
+
+# Numero de Docentes que tienen una cobertura mayor a 25, tener en consideración que se espera que tengan este porcentaje
+# para considerar un número válido
+
+Docentes25 <- carrera %>% select(rut_docente,codigo_actividad,paralelo,tipo_asig,finalizado_percent) %>%
+  filter(finalizado_percent>25) %>% unique() %>% count() %>% as.integer()
+
+# Recuento de Encuestas por Estado
+EncuestasFinalizadas <- sum(carrera$finalizado)
+EncuestasNoParticipa <- sum(carrera$no_participa)
+EncuestasNoInicia <- sum(carrera$no_iniciada)
+EncuestasPendiente <- sum(carrera$pendiente)
+EncuestasTotal <- sum(carrera$total)
+
+
+# Recuento de Docentes por Clasificación Mediador -----------------------------------------------------------------
+
+
+DeficienteBruto <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador) %>% filter(
+  clasificacion_mediador == "Deficiente"
+) %>% unique() %>% count() %>% as.integer()
+    
+DeficienteDepurado <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador,finalizado) %>%
+  filter(clasificacion_mediador == "Deficiente",finalizado>0) %>% unique() %>% count() %>% as.integer()
+
+InsuficienteBruto <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador) %>% filter(
+  clasificacion_mediador == "Insuficiente"
+) %>% unique() %>% count() %>% as.integer()
+
+InsuficienteDepurado <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador,finalizado) %>%
+  filter(clasificacion_mediador == "Insuficiente",finalizado>0) %>% unique() %>% count() %>% as.integer()
+
+SatisfactorioBruto <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador) %>% filter(
+  clasificacion_mediador == "Satisfactorio"
+) %>% unique() %>% count() %>% as.integer()
+
+SatisfactorioDepurado <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador,finalizado) %>%
+  filter(clasificacion_mediador == "Satisfactorio",finalizado>0) %>% unique() %>% count() %>% as.integer()
+
+SobresalienteBruto <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador) %>% filter(
+  clasificacion_mediador == "Sobresaliente"
+) %>% unique() %>% count() %>% as.integer()
+
+SobresalienteDepurado <- carrera %>% select(rut_docente,codigo_actividad,paralelo,clasificacion_mediador,finalizado) %>%
+  filter(clasificacion_mediador == "Sobresaliente",finalizado>0) %>% unique() %>% count() %>% as.integer()
+
+
+# Recuento de Docentes por Clasificación Gestión ------------------------------------------------------------------
+DeficienteBrutoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion) %>%
+  filter(clasificacion_gestion == "Deficiente") %>% unique() %>% count() %>% as.integer()
+
+DeficienteDepuradoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion, finalizado) %>%
+  filter(clasificacion_gestion == "Deficiente", finalizado > 0) %>% unique() %>% count() %>% as.integer()
+
+InsuficienteBrutoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion) %>%
+  filter(clasificacion_gestion == "Insuficiente") %>% unique() %>% count() %>% as.integer()
+
+InsuficienteDepuradoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion, finalizado) %>%
+  filter(clasificacion_gestion == "Insuficiente", finalizado > 0) %>% unique() %>% count() %>% as.integer()
+
+SatisfactorioBrutoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion) %>%
+  filter(clasificacion_gestion == "Satisfactorio") %>% unique() %>% count() %>% as.integer()
+
+SatisfactorioDepuradoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion, finalizado) %>%
+  filter(clasificacion_gestion == "Satisfactorio", finalizado > 0) %>% unique() %>% count() %>% as.integer()
+
+SobresalienteBrutoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion) %>%
+  filter(clasificacion_gestion == "Sobresaliente") %>% unique() %>% count() %>% as.integer()
+
+SobresalienteDepuradoG <- carrera %>% select(rut_docente, codigo_actividad, paralelo, clasificacion_gestion, finalizado) %>%
+  filter(clasificacion_gestion == "Sobresaliente", finalizado > 0) %>% unique() %>% count() %>% as.integer()
+
+# Porcentajes Cobertura-----------------------------------------------------------------------------------------------------
+
+porcentajeFinalizadas <- round(EncuestasFinalizadas/EncuestasTotal*100,1)
+porcentajeNoParticipa <- round(EncuestasNoParticipa/EncuestasTotal*100,1)
+porcentajeNoInicia <- round(EncuestasNoInicia/EncuestasTotal*100,1)
+porcentajePendiente <- round(EncuestasPendiente/EncuestasTotal*100,1)
+
+Maxparticipacion <- max(carrera$finalizado)
+MaxparticipacionP <- max(carrera$finalizado_percent)
+ProParticipacion <- round(mean(carrera$finalizado),2)
+ProParticipacionP <- round(mean(carrera$finalizado_percent),2)
+desviacionParticipacion <- round(sd(carrera$finalizado),2)
+desviacionParticipacionP <- round(sd(carrera$finalizado_percent),2)
+
+
+# Tabla de Docentes -----------------------------------------------------------------------------------------------
+
+TablaDocentesMediador <- carrera %>% select(
+  nombre_docente,
+  apaterno_docente,
+  amaterno_docente,
+  codigo_actividad,
+  nombre_actividad,
+  finalizado_percent,
+  clasificacion_mediador
+) %>% 
+  arrange(desc(finalizado_percent)) %>% kbl(
+  caption = "Tabla de Resumen: Competencia Mediador",
+  col.names =c("Nombres","P.Apellido","S.Apellido","C.A","N.A","P%","C.M"),
+  align = c("l","l","l","l","l","l","l","l"),
+  format = "pipe",
+  booktabs = T)
+
+TablaDocentesGestion <- carrera %>% select(
+  nombre_docente,
+  apaterno_docente,
+  amaterno_docente,
+  codigo_actividad,
+  nombre_actividad,
+  finalizado_percent,
+  clasificacion_gestion
+) %>% 
+  arrange(desc(finalizado_percent)) %>% kbl(
+  caption = "Tabla de Resumen: Competencia Gestión",
+  col.names =c("Nombres","P.Apellido","S.Apellido","C.A","N.A","P%","C.G"),
+  align = c("l","l","l","l","l","l","l"),
+  format = "pipe",
+  booktabs = T)
+
+
+# Datos de Identificación -----------------------------------------------------------------------------------------
+
+carrera_nombre <- carrera %>% select(codigo_carrera,nombre_carrera) %>% unique() %>%
+  unite(col=carrera,c(codigo_carrera,nombre_carrera),sep = " ") %>% as.String()
+
+facultad <- carrera %>% select(unidad_academica) %>% unique() %>% as.String()
+
+semestre <- carrera %>% select(semestre,proceso) %>% unique() %>% unite(col=semestre,c("semestre","proceso"),sep = "-") %>% 
+  as.String()
+
+tipo_carrera <- carrera %>% select(tipo_carrera) %>% unique() %>% mutate(tipo_carrera = case_when(
+  tipo_carrera=="Pregrado PSU"~"PSU/PTU/PAES",
+  T ~ tipo_carrera
+)) %>% as.String()
+
+sede <- carrera %>% select(sede) %>% unique() %>% as.String()
+
+tipo_actividad <- carrera %>% select(clasificacion_actividad) %>% unique() %>% as.String()
+
+psatisfactoriom <- round(SatisfactorioDepurado/DocentesF*100,2)
+psobresalientem <- round(SobresalienteDepurado/DocentesF*100,2)
+pinsuficientem <- round(InsuficienteDepurado/DocentesF*100,2)
+pdeficientem <- round(DeficienteDepurado/DocentesF*100,2)
+
+psatisfactoriog <- round(SatisfactorioDepuradoG/DocentesF*100,2)
+psobresalienteg <- round(SobresalienteDepuradoG/DocentesF*100,2)
+pinsuficienteg <- round(InsuficienteDepuradoG/DocentesF*100,2)
+pdeficienteg <- round(DeficienteDepuradoG/DocentesF*100,2)
+
+```
+
+\newpage
+
+# Identificación de Carrera
+
+**Carrera**: `r carrera_nombre`.
+
+**Unidad Académica**: `r facultad`.
+
+**Modalidad de Estudios**: `r tipo_carrera`. 
+
+**Sede**: `r sede`.
+
+**Tipo de actividades curriculares**: `r tipo_actividad`
+
+**Semestre**: `r semestre`
+
+\newpage
+
+# Resumen Ejecutivo
+
+El presente informe tiene por objetivo informar a las Direcciones y/o Jefaturas de Carrera el desempeño de los docentes en el marco del proceso de Evaluación Docente Institucional, del proceso `r semestre`, del Instrumento de Estudiantes.
+
+Es importante señalar que esta información es de caracter confidencial y premiliminar, por lo que debe ser tratada como tal, cualquier decisión que la carrera y/o la unidad académica tome en virtud de estos datos es responsabilidad única y exclusiva de estos.
+
+
+## Datos de Cobertura del Proceso.
+
+La carrera `r carrera_nombre`, obtuvo una participación del `r porcentajeFinalizadas`% equivalentes a `r EncuestasFinalizadas` encuestas de un total de `r EncuestasTotal`.
+
+El porcentaje máximo de participación que alcanzó una actividad curricular fue de `r MaxparticipacionP`% equivalentes a `r Maxparticipacion` encuestas.
+
+Respecto a las encuestas en donde el cuerpo estudiantil no dio su consentimiento para participar fue de `r EncuestasNoParticipa` encuesta(s), equivalentes al `r porcentajeNoParticipa`%, respecto a aquellos donde estudiantes no contestaron fue de `r EncuestasNoInicia`, equivalentes al `r porcentajeNoInicia`%.
+
+El n° total de docentes evaluados fue de `r TotalDocentes`, de los cuales `r DocentesF` recibieron al menos una o mas respuestas por actividad curricular, y `r Docentes25` un porcentaje mayor al 25%.
+
+Se informa que aquellos docentes que no recibieron ninguna respuesta por parte del cuerpo estudiantil su nota se asignó con una clasificación de competencia **No Evaluado**.
+
+## Datos de Resultados del Proceso.
+
+Respecto a los resultados del proceso, solo se considerarán aquellos docentes que tengan almenos 1 respuesta contestada en el formulario, por ende todos aquellos que tengan clasificación **No Evaluado**, se eliminarán del calculo total y promedio de competencias.
+
+Los resultados de este proceso se dividen en la *Competencia Mediador* y los de *Aspectos de Gestión Administrativa*.
+
+**Competencias y/o Dimensiones**
+
+Se observa que respecto a la Competencia Mediador el n° de docentes que alcanzó un nivel de *Satisfactorio* y *Sobresaliente* es de `r SatisfactorioDepurado` y `r SobresalienteDepurado` respectivamente, las cuales equivalen al `r psatisfactoriom`% y `r psobresalientem`% del total de docentes.
+
+Se observa que respecto a la Gestión Administrativa el n° de docentes que alcanzó un nivel de *Satisfactorio* y *Sobresaliente* es de `r SatisfactorioDepuradoG` y `r SobresalienteDepuradoG` respectivamente, las cuales equivalen al `r psatisfactoriog`% y `r psobresalienteg`% del total de docentes.
+
+Con relación a aquellos docentes que alcanzaron clasificaciones de *Insuficiente* y *Deficiente* en la Competencia Mediador fue de `r InsuficienteBruto` y `r DeficienteBruto`, equivalentes a `r pinsuficientem`% y `r pdeficientem`% respectivamente. Mientras que para la Gestión administrativa el n° de docentes fue `r InsuficienteBrutoG` y `r DeficienteBrutoG`, equivalentes al `r pinsuficienteg`% y `r pdeficienteg`% respectivamente.
+
+Para mayor comprensión de los datos, en el siguiente apartado se observarán gráficos asociados al proceso y la tabla con el detalle de los docentes.
+
+\newpage
+
+## Coberturas del Proceso
+
+El n° total de encuestas para la carrera `r carrera_nombre` fue de `r EncuestasTotal`.
+
+```{r Gráfico Participación, echo=FALSE, fig.height=5, fig.width=8}
+grafico_participacion
+```
+
+```{r Tabla Participación, echo=FALSE, fig.height=5, fig.width=8}
+tablaresumen
+```
+
+\newpage
+
+## Resultados
+
+Para estos gráficos no se consideró a los docentes que tienen clasificación *No Evaluado*. el n° total de docentes es de `r TotalDocentes`, pero se tomará encuenta solo los datos de `r DocentesF`.
+
+*Competencia Mediador*
+
+```{r Gráfico Mediador, echo=FALSE, fig.height=5, fig.width=8}
+GraficoMediadorDepurado
+```
+
+```{r Tabla Mediador, echo=FALSE, fig.height=5, fig.width=8}
+MediadorTABdepurado
+```
+
+\newpage
+
+```{r Gráfico Gestion, echo=FALSE, fig.height=5, fig.width=8}
+GraficoCompetenciaGestionDepurado
+```
+
+```{r Tabla Gestion, echo=FALSE, fig.height=5, fig.width=8}
+GestionTabDepurado
+```
+
+\newpage
+
+## Detalle de Docentes
+
+A continuación se podrá revisar en detalle la clasificación por docente de cada competencia y/o dimensión.
+
+Se debe tener en cuenta lo siguiente:
+
+  * **C.N**   ~ Código de Actividad Curricular
+  * **N.A**   ~ Nombre de Actividad Curricular
+  * **P%**    ~ Porcentaje de Participación
+  * **C.M**   ~ Clasificación Mediador
+  * **C.G**   ~ Clasificación Gestión
+
+*Competencia Mediador*
+
+```{r Tabla Docentes MEDIADOR, echo=FALSE, fig.height=5, fig.width=8}
+TablaDocentesMediador
+```
+
+\newpage
+
+*Aspectos de Gestión*
+
+```{r Tabla Docentes GESTION, echo=FALSE, fig.height=5, fig.width=8}
+TablaDocentesGestion
+```
+
