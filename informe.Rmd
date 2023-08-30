@@ -1,0 +1,213 @@
+---
+author: UES
+output: #word_document
+  word_document:
+     reference_docx: InformeDocente.docx
+params:
+  reg: 2363
+---
+
+```{r opciones de cada chunk de código, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, dpi=300)
+```
+
+```{r Librerías/Pquetes, include = FALSE}
+source("Carga de Paquetes.R")
+```
+
+```{r Definir Regiones, include=FALSE}
+source("reg.r", encoding = "UTF-8")
+reg <- as.character(reg3[reg3$reg1 == params$reg, 1]) # esto facilita la impresión masiva de reportes
+```
+
+
+---
+title: Proceso de Evaluación Docente Institucional
+date: `r format(Sys.Date(), "%d/%m/%Y")`
+---
+
+```{r Cargar Datos}
+source("Carga de Datos.R", encoding = "UTF-8")
+```
+
+```{r Gráficos}
+source("graficos.r", encoding = "UTF-8")
+```
+
+# Identificación de Carrera
+
+**Carrera:** `r carrera_nombre`.
+
+**Unidad Académica:** `r facultad`.
+
+**Modalidad**: `r tipo_carrera`.
+
+**Semestre**: `r semestre`.
+
+**Sede:** `r sede`.
+
+\newpage
+
+# Resumen Ejecutivo
+
+El siguiente informe tiene por objetivo entregar los resultados registrados en el Proceso de Evaluación Docente Institucional durante el periodo `r semestre`. Es importante recordar que esta instancia evaluativa busca la identificación de oportunidades de mejora de la función docente.
+
+Se señala que esta información es de caracter confidencial, por lo que debe ser tratada como tal, cualquier decisión que la carrera `r carrera_nombre` y/o la `r facultad` tome en virtud de estos datos es responsabilidad única y exclusiva de estos.
+
+## Coberturas
+
+La carrera `r carrera_nombre` durante el `r semestre`, obtuvo una participación del `r efp`% del *Instrumento de Estudiantes*, un `r afp`% correspondiente a la *Autoevaluación*, y un `r dfp`% del *Instrumento de Dirección/Jefatura de Carrera*.
+
+El n° de docentes registrados fue de `r total_docentes` y el n° de encuestas total de estudiantes fue de `r et`.
+
+## Competencia Mediador
+
+Con relación a esta competencia el n° de docentes con clasificación *Sobresaliente* y *Satisfactorio* fueron de `r dmso` y `r dmsa` equivalentes al `r dmsop`% y `r dmsap`% respectivamente. el n° de docentes con clasificación *Insuficiente* y *Deficiente* fueron de `r dmi` y `r dmd` equivalentes al `r dmip`% y `r dmdp`% respectivamente. Por último, aquellos docentes que cuentan con clasificación *Suficiente* y *No Evaluada/o*[^1] fueron de `r dms` y `r dmne` equivalentes al `r dmsp`% y `r dmnep`%.
+
+[^1]: *No Evaluada/o* corresponde a docente sin datos de la encuesta de estudiantes.
+
+## Competencia Gestión
+
+Con relación a esta competencia el n° de docentes con clasificación *Sobresaliente* y *Satisfactorio* fueron de `r dgso` y `r dgsa` equivalentes al `r dgsop`% y `r dgsap`% respectivamente. el n° de docentes con clasificación *Insuficiente* y *Deficiente* fueron de `r dgi` y `r dgd` equivalentes al `r dgip`% y `r dgdp`% respectivamente. Por último, aquellos docentes que cuentan con clasificación *Suficiente* y *No Evaluada/o* fueron de `r dgs` y `r dgne` equivalentes al `r dgsp`% y `r dgnep`%.
+
+## Competencia Indagador
+
+Con relación a esta competencia el n° de docentes con clasificación *Sobresaliente* y *Satisfactorio* fueron de `r diso` y `r disa` equivalentes al `r disop`% y `r disap`% respectivamente. el n° de docentes con clasificación *Insuficiente* y *Deficiente* fueron de `r dii` y `r did` equivalentes al `r diip`% y `r didp`% respectivamente. Por último, aquellos docentes que cuentan con clasificación *Suficiente* y *No Evaluada/o* fueron de `r dis` y `r dine` equivalentes al `r disp`% y `r dinep`% respectivamente.
+\newpage
+
+# Coberturas del Proceso
+
+A continuación, se observará un resumen gráfico de las coberturas del proceso para la carrera.
+
+## Instrumento de Estudiantes
+
+```{r gráfico de estudiantes, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+ParticipacionEstudiantes
+```
+
+```{r tabla estudiantes, echo=FALSE}
+ParticipacionEstudiantesTab
+```
+\newpage
+
+## Instrumento de Autoevaluación
+
+```{r, grafico de autoevaluacion, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+ParticipacionAutoevaluacion
+```
+
+```{r tabla autoevaluacion, echo=FALSE}
+ParticipacionAutoevaluacionTab
+```
+
+## Instrumento de Dirección/Jefatura de Carrera
+
+```{r gráfico direccion, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+ParticipacionDirector
+
+```
+```{r tabla direccion}
+ParticipacionDirectorTab
+```
+
+## Resumen de Coberturas
+
+```{r gráfico Total, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+ParticipacionCoberturasInstrumentos
+
+```
+
+```{r tabla total}
+ParticipacionCoberturasInstrumentosTab
+```
+\newpage
+
+# Resultados
+
+Para la competencia mediador y competencia de gestión los rangos estan definidos por:
+
+*Desde igual a 0 hasta igual o menor que 2 ~ Insuficiente ajuste al Perfil Docente*
+
+*Desde mayor a 2 hasta igual o menor que 4 ~ Deficiente ajuste al Perfil Docente*
+
+*Desde mayor a 4 hasta igual o menor que 6 ~ Suficiente ajuste al Perfil Docente*
+
+*Desde mayor a 6 hasta igual o menor que 8 ~ Satisfactorio ajuste al Perfil Docente*
+
+*Desde mayor a 8 hasta igual o menor que 9 ~ Sobresaliente ajuste al Perfil Docente*
+
+Para la competencia indagador relacionada con los docentes contratados como Planta/Contrata están definidos por:
+
+*Desde igual a 0 hasta igual o menor que 1,2 ~ Insuficiente ajuste al Perfil Docente*
+
+*Desde mayor a 1,2 hasta igual o menor que 2,4 ~ Deficiente ajuste al Perfil Docente*
+
+*Desde mayor a 2,4 hasta igual o menor que 3,6 ~ Suficiente ajuste al Perfil Docente*
+
+*Desde mayor a 3,6 hasta igual o menor que 4,8 ~ Satisfactorio ajuste al Perfil Docente*
+
+*Desde mayor a 4,8 hasta igual o menor que 6 ~ Sobresaliente ajuste al Perfil Docente* 
+
+Para la competencia indagador relacionada con los docentes contratados como Honorarios están definidos por:
+
+*Desde igual a 0 hasta menor que 1 ~ Deficiente ajuste al Perfil Docente*
+
+*Desde igual a 1 hasta menor que 2 ~ Suficiente ajuste al Perfil Docente*
+
+*Desde igual a 2 hasta menor que 3 ~ Satisfactorio ajuste al Perfil Docente*
+
+*Igual a 3 ~ Sobresaliente ajuste al Perfil Docente*
+
+\newpage
+
+## Competencia Mediador
+
+```{r mediador, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+GraficoClasificacionMediador
+
+RecuentoMediadorTab
+```
+
+## Competencia Gestion
+
+```{r Gestion, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+GraficoClasificacionGestion
+
+RecuentoGestionTab
+```
+
+## Competencia Indagador
+
+```{r Indagador, echo=FALSE, dpi=300, fig.width=6, fig.height=5}
+GraficoClasificacionIndagador
+
+RecuentoIndagadorTab
+```
+
+\newpage
+
+## Listado de Docentes por Competencia Mediador
+
+A continuación se podrá observar de forma individual a los docentes y su desempeño por cada competencia.
+
+```{r Lista Mediador}
+ListadoMediador
+```
+
+\newpage
+
+## Listado de Docentes por Competencia Gestión
+
+```{r Lista gestion}
+ListadoGestion
+```
+
+\newpage
+
+## Listado de Docentes por Competencia Indagador
+
+```{r Lista indagador}
+ListadoIndagador
+```
+
+
