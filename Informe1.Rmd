@@ -1,0 +1,424 @@
+---
+title: "Reporte de  Evaluación Docente"
+subtitle: "Segundo Semestre del 2023"
+author: "Andrés Ignacio Díaz Castro"
+date: "2024-01-28"
+output: 
+  html_document:
+   toc: TRUE
+   toc_float: TRUE
+   mainfont: Aptos
+params:
+ reg: 2362
+---
+
+```{r opciones de cada chunk de código, echo=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message=FALSE, warning=FALSE, dpi=300)
+```
+
+```{r Librerías/Pquetes, include = FALSE}
+source("paquetes.R")
+```
+
+```{r Definir Regiones, include=FALSE}
+source("reg.r", encoding = "UTF-8")
+reg <- as.character(reg3[reg3$reg1 == params$reg, 1]) # esto facilita la impresión masiva de reportes
+```
+
+```{r Cargar Datos}
+source("datos.R", encoding = "UTF-8")
+```
+
+```{r Gráficos}
+source("graficos.r", encoding = "UTF-8")
+```
+
+```{=html}
+<style>
+body {
+  text-align: justify;
+}
+</style>
+```
+# Antecedentes Generales
+
+La Evaluación Docente Institucional nace como mecanismo de Aseguramiento de la Calidad de acuerdo con la Resolución Exenta 30-0089-23, la cual establece el proceso con el objetivo de detectar brechas y/o desajustes del cuerpo docente de acuerdo con el Perfil declarado en el Modelo Educativo Institucional.
+
+Esta Instancia evaluativa se aplica de forma sistemática todos los semestres y está dirigida a tres grupos objetivos:
+
+-   Cuerpo Estudiantil
+
+-   Cuerpo Docente
+
+-   Direcciones/Jefaturas de Carrera
+
+El instrumento se contesta a través del **aula virtual** en una escala likert, la cual es transformada a una escala de puntuación, que posteriormente mediante un punto de corte, se identifican las oportunidades de mejora, con el objeto de ser ajustadas en el **Fortalecimiento de la Función Docente.**
+
+Es importante señalar que la aplicación durante el año 2023 estuvo marcada por dos formas de tomar la encuesta, la del primer semestre mediante un mecanismo voluntario y el segundo semestre mediante una modalidad obligatoria, con el propósito de asegurar la validez de las respuestas.
+
+El presente reporte debe ser resguardado, debido a la sensibilidad de los datos expuestos, se recomienda discutir este informe en consejos de carrera.
+
+Durante el primer semestre del 2024 se realizará el **Fortalecimiento de la Función Docente** en formato **pilotaje**, es importante que la comunidad universitaria se sume a esta instancia con el objetivo de cerrar las brechas puedan estar presentes en el cuerpo docente, así como también, retroalimentar a la Unidad encargada de desarrollar estas capacitaciones.
+
+Para más información sobre la Evaluación y Fortalecimiento de la Función Docente, puede escribir al correo: [estudioyseguimiento\@unap.cl](mailto:estudioyseguimiento@unap.cl){.email}
+
+# Identificación
+
+El presente reporte corresponde la carrera `r nombre_carrera` con código `r codigo_carrera_iden` perteneciente a la `r facultad` de la sede `r sede`.
+
+Los datos presentados están asociados a las actividades curriculares disciplinares, es decir, a quellas que no pertenecen a Electivos de Formación General, Plan Común, Línea de Licenciatura y Programa Institucional de Inglés.
+
+# Habilidades
+
+los instrumentos de evaluación docente se fundamentan en el Perfil Docente Institucional, los cuales miden las compentencias **mediador** e **indagador,** las cuales se subdividen en las siguientes habilidades:
+
+*h1:* Demuestra dominio teórico y práctico de su disciplina y procura su cultivo en forma progresiva, *desde ahora Dominio Teórico-Práctico.*
+
+*h2:* Comunica ideas, argumentos y conocimiento de forma clara, eficaz y en coherencia con los principios y valores institucionales, *desde ahora Comunicación.*
+
+*h3:* Organiza la enseñanza-aprendizaje centrada en el estudiante, *desde ahora Organización.*
+
+*h4:* Diversifica la enseñanza según contextos específicos (modalidad formativa), *desde ahora Diversificación.*
+
+*h5:* Implementa el proceso de enseñanza aprendizaje en concordancia con el nivel de desarrollo de competencias de los planes formativos y según modalidad formativa, *desde ahora Implementación.*
+
+*h7:* Promueve un clima de aceptación, confianza y respeto, *desde ahora Clima.*
+
+*h8:* Contribuye a la reflexión pedagógica y disciplinar colectiva e individual, *desde ahora Contribución a la reflexión.*
+
+*h9:* Realizo contribuciones a la práctica docente y/o al plan formativo, considerando el enfoque a la mejora continua de mi quehacer en el aula, en relación al proceso de enseñanza-aprendizaje, así como la participación en las instancias de la carrera que apunten a esto, *desde ahora Contribución a la práctica.*
+
+*h10:* Recoge información teórica y práctica que le permiten comprender y mejorar su práctica, *desde ahora Recopilación.*
+
+*h12:* Sistematiza resultados de sus procesos de reflexión o investigación respecto de experiencias o prácticas educativas de su disciplina, *desde ahora Sistematización.*
+
+| Habilidad                       | Competencia | E\* | A.H\*\* | A.PC\*\*\* | DJ.H\*\*\*\* | D.PC\*\*\*\*\* |
+|-----------------------|------------|-----|-------|--------|---------|----------|
+| *H1: Dominio Teórico-Práctico*  | Mediador    | X   | X       | X          | X            | X              |
+| H2: Comunicación                | Mediador    | X   | X       | X          |              |                |
+| H3: Organización                | Mediador    | X   | X       | X          | X            | X              |
+| H4: Diversificación             | Mediador    | X   | X       | X          |              |                |
+| H5: Implementación              | Mediador    | X   | X       | X          | X            | X              |
+| H7: Clima                       | Mediador    | X   | X       | X          | X            | X              |
+| H8: Contribución a la reflexión | Indagador   |     |         | X          |              |                |
+| H9: Contribución a la práctica  | Indagador   |     |         | X          |              | X              |
+| H10: Recopilación               | Indagador   |     |         | X          | X            | X              |
+| H12: Sistematización            | Indagador   |     |         | X          |              | X              |
+
+: Habilidades que mide cada Instrumento:
+
+| Sigla           | Definición                                                                                                                       |
+|----------|--------------------------------------------------------------|
+| E\*             | Instrumento de Estudiantes                                                                                                       |
+| A.H\*\*         | Instrumento de Autoevaluación para docentes bajo modalidad de contrato a Honorarios.                                             |
+| A.PC\*\*\*      | Instrumento de Autoevaluación para docentes bajo modalidad de contrato Planta o Contrata.                                        |
+| DJ.H\*\*\*\*    | Instrumento de Evaluación por parte de Dirección/Jefatura de carrera para docentes bajo modalidad de contrato a Honorarios.      |
+| DJ.PC\*\*\*\*\* | Instrumento de Evaluación por parte de Dirección/Jefatura de carrera para docentes bajo modalidad de contrato Planta o Contrata. |
+
+# Perfiles
+
+# Instrumento de Estudiantes
+
+El instrumento de estudiantes mide las siguientes habilidades declaradas en el Perfil centradas principalmente en la competencia mediador:
+
+*h1:* Demuestra dominio teórico y práctico de su disciplina y procura su cultivo en forma progresiva.
+
+*h2:* Comunica ideas, argumentos y conocimiento de forma clara, eficaz y en coherencia con los principios y valores institucionales.
+
+*h3:* Organiza la enseñanza-aprendizaje centrada en el estudiante.
+
+*h4:* Diversifica la enseñanza según contextos específicos (modalidad formativa).
+
+*h5:* Implementa el proceso de enseñanza aprendizaje en concordancia con el nivel de desarrollo de competencias de los planes formativos y según modalidad formativa.
+
+*h7:* Promueve un clima de aceptación, confianza y respeto.
+
+Se entiende como una habilidad débil con resultado menor o igual a 1,5, de una escala que inicia desde el 0 y finaliza en 3.
+
+\newpage
+
+# Perfiles de Habilidades
+
+El cuerpo docente se clasifica de acuerdo con los siguientes perfiles, los cuales indican el número de habilidades que tienen débiles:
+
+**Perfil 0**: Se trata del docente que se ajusta al perfil docente en todas las habilidades, cuyas brechas existentes son casi imperceptibles para el cuerpo estudiantil.
+
+**Perfil 1**: Es la o el docente que tiene **una habilidad débil** de seis declaradas.(1/6)
+
+**Perfil 2**: Es la o el docente que tiene **dos habilidades débiles** de seis declaradas.(2/6)
+
+**Perfil 3**: Es la o el docente que tiene **tres habilidades débiles** de seis declaradas, en especial la habilidad de **H4 (Diversificación)**.(3/6)
+
+**Perfil 4**: Es la o el docente que tiene **cuatro habilidades débiles** de seis declaradas, en especial las habilidades de *H4 (Diversificación) y H7 Clima*.(4/6)
+
+**Perfil 5**: Es la o el docente que tiene **cinco habilidades débiles** de seis declaradas, en especial las habilidades de **H3 (Organización), H4 (Diversificación) y H7 (Clima)**.(5/6)
+
+**Perfil 6**: Es la o el docente que tiene todas las habilidades débiles declaradas.(6/6)
+
+**Perfil 6.1**: Es la o el docente que no recibe respuestas por parte del cuerpo estudiantil, por ende no se puede identificar brechas en este instrumento.
+
+\newpage
+
+# Resultados de Habilidades
+
+En la siguiente tabla, se identifica al docente por actividad curricular, con su respectivo rut y nombre completo **(Docente)**, el nivel de cobertura de la actividad **(EF%)**, el código de la actividad curricular **(Código)**, el tipo de clasificación **(Tipo)**, paralelo y clasificación **(a qué perfil pertenece)**.
+
+En la tabla *Listado de Docentes: Clasificación de Perfil* no se incluye al cuerpo docente clasificado como **Perfil 0**, debido a que no presentan debilidades significativas.
+
+```{r lista de clasificacion de perfil, echo=FALSE}
+Tab_lista_clas_perfil
+```
+
+En la siguiente tabla, se identifica al docente, el código de la actividad, y las habilidades **(del h1 al h7)**, las cuales indican si es *Negativa* (Brechas) o *Positiva*(representada por un "-" para mejorar visualización). Es importante señalar que no se incluyen a los *Perfil 6.1*, debido a que no se registraron encuestas finalizadas por parte de los estudiantes, lo que indica que no se pudieron identificar brechas.
+
+```{r lista de clasificacion por habilidad, echo = FALSE}
+Tab_lista_class_habilidad
+```
+
+\newpage
+
+En resumen, la carrera presenta las siguientes clasificaciones de docoentes:
+
+```{r resultados, echo = FALSE, fig.height=4, fig.width=8}
+clas_perfil_docente_estudiantes
+```
+
+El número de docentes clasificados con **Perfil 0** fue de `r docentes_0_recuento` equivalente(s) al `r docentes_0_porcentaje`%, clasificados con **Perfil 1** fue de `r docentes_1_recuento` equivalente(s) al `r docentes_1_porcentaje`%, clasificados con **Perfil 2** fue de `r docentes_2_recuento` equivalente(s) al `r docentes_2_porcentaje`%, clasificados con **Perfil 3** fue de `r docentes_3_recuento` equivalente(s) al `r docentes_3_porcentaje`%, clasificados con **Perfil 4** fue de `r docentes_4_recuento` equivalente(s) al `r docentes_4_porcentaje`%, clasificados con **Perfil 5** fue de `r docentes_5_recuento` equivalente(s) al `r docentes_5_porcentaje`%, clasificados con **Perfil 6** fue de `r docentes_6_recuento` equivalente(s) al `r docentes_6_porcentaje`%, y por último, clasificados con **Perfil 6.1** fue de `r docentes_6.1_recuento` equivalente(s) al `r docentes_6.1_porcentaje`%.
+
+\newpage
+
+# Cobertura de Estudiantes
+
+La participación del cuerpo estudiantil en el proceso de evaluación docente es la siguiente:
+
+-   N° total de encuestas generadas: `r total_estudiantes`.
+
+-   N° total de encuestas finalizadas: `r finalizado_estudiantes`.
+
+-   Su participación general es de `r cobertura_general_estudiantes`%.
+
+-   Se observa que el valor mínimo de participación fue del `r round(min(estudiantes$ef),1)`%.
+
+-   Se observa que el valor máximo de participación fue del `r round(max(estudiantes$ef),1)`%.
+
+```{r histogramaEstudiantes, echo=FALSE, fig.height= 4, fig.width=7}
+histograma_participacion
+```
+
+\newpage
+
+# Instrumento de Dirección/Jefatura de Carrera
+
+La evaluación por parte de la dirección de carrera mide las siguientes habilidades declaradas en el Perfil:
+
+*h1:* Demuestra dominio teórico y práctico de su disciplina y procura su cultivo en forma progresiva.
+
+*h3:* Organiza la enseñanza-aprendizaje centrada en el estudiante.
+
+*h5:* Implementa el proceso de enseñanza aprendizaje en concordancia con el nivel de desarrollo de competencias de los planes formativos y según modalidad formativa.
+
+*h7:* Promueve un clima de aceptación, confianza y respeto.
+
+*h9:* Realizo contribuciones a la práctica docente y/o al plan formativo, considerando el enfoque a la mejora continua de mi quehacer en el aula, en relación al proceso de enseñanza-aprendizaje, así como la participación en las instancias de la carrera que apunten a esto. **(Solo cuerpo docente contratado a PLANTA/CONTRATA)**
+
+*h10:* Recoge información teórica y práctica que le permiten comprender y mejorar su práctica.
+
+*h12:* Sistematiza resultados de sus procesos de reflexión o investigación respecto de experiencias o prácticas educativas de su disciplina.**(Solo cuerpo docente contratado a PLANTA/CONTRATA)**
+
+Se entiende como una habilidad débil con resultado menor o igual a 1,5, de una escala que inicia desde el 0 y finaliza en 3.
+
+\newpage
+
+# Perfiles de habilidades: Docente Honorarios
+
+De acuerdo con los resultados de la evaluación por parte de la dirección de carrera el cuerpo docente se clasifica de la siguiente forma:
+
+**Perfil 0:** Es la o el docente que no tiene debilidades de acuerdo con las habilidades declaradas.
+
+**Perfil 1:** Es la o el docente que tiene al menos una debilidad de cinco habilidades declaradas, en especial **H10 (Recopilación)**.(1/5)
+
+**Perfil 2:** Es la o el docente que tiene al menos dos debilidades de cinco habilidades declaradas, en especial **H10 (Recopilación)**. (2/5)
+
+**Perfil 3:** Es la o el docente que tiene al menos tres debilidades de cinco habilidades declaradas, en especial **H10 (Recopilación)**. (3/5)
+
+**Perfil 4:** Es la o el docente que tiene tiene al menos cuatro debilidades de cinco habilidades declaradas. (4/5)
+
+**Perfil 5.1** Es la o el docente que no recibe retroalimentación por parte de su dirección de carrera.
+
+\newpage
+
+# Perfiles de habilidades: Docente Planta/Contrata
+
+**Perfil 0:** Es la o el docente que no tiene debilidades de acuerdo con las habilidades declaradas.
+
+**Perfil 1:** Es la o el docente que tiene al menos una debilidad de siete habilidades declaradas, en especial *H3 (Organización)*. (1/7)
+
+**Perfil 2:** Es la o el docente que tiene al menos dos debilidades de siete habilidades declaradas, en especial **H10 (Recopilación)** y **H12 (Sistematización)**. (2/7)
+
+**Perfil 3:** Es la o el docente que tiene al menos tres debilidades de siete habilidades declaradas, en especial **H10 (Recopilación)** y **H12 (Sistematización)**. (3/7)
+
+**Perfil 5:** Es la o el docente que tiene al menos cinco debilidades de siete habilidades declaradas, en especial **H3 (Organización) y H5 (Implementación) ,H9 (Contribución al Plan Formativo) , H10 (Recopilación), H12 (Sistematización)**. (5/7)
+
+**Perfil 6:** Es la o el docente que tiene al menos solo una habilidad fuerte de siete habilidades declaradas, la cual es **H5 (Implementación)**, todas las demás se clasificaron como débiles. (6/7)
+
+**Perfil 7.1:** Es la o el docente que no recibe retroalimentación por parte de su dirección de carrera.
+
+\newpage
+
+# Resultados de Habilidades
+
+En la siguiente tabla se identifica al docente a honorarios por carrera, con su respectivo rut y nombre completo **(Docente)**, si la dirección de carrera realizó la encuesta **(DF(%) - 100 % lo realizó, 0 % no lo realizó)**, el código de carrera **(Código)**, nombre de carrera **(Carrera)** y su clasificación **(Revisar: Perfiles de Habilidades: Docentes Honorarios)**.
+
+No se incluyen los docentes con *Perfil 0*.
+
+```{r TAB_LISTA_CLASS_PERFIL_DIRECCION_HONORARIO, echo=FALSE}
+TAB_LISTA_CLASS_PERFIL_DIRECCION_HONORARIO
+```
+
+En la siguiente tabla se identifica al docente **Planta/Contrata** por carrera, con su respectivo rut y nombre completo **(Docente)**, si la dirección realizó la encuesta **(DF(%) - 100 % lo realizó, 0 % no lo realizó)**, el código de carrera **(Código)**, nombre de carrera **(Carrera)** y su clasificación **(Revisar: Perfiles de Habilidades: Docentes Planta/Contrata)**.
+
+Es importante señalar, que es altamente probable que aparezca en el listado la persona que tiene el cargo de Director/Directora de carrera, lo anterior es por la duplicidad de cargos, el cual impide que la dirección pueda evaluarse a sí misma como docente.
+
+```{r TAB_LISTA_CLASS_PERFIL_DIRECCION_PC, echo=FALSE}
+TAB_LISTA_CLASS_PERFIL_DIRECCION_PC
+```
+
+En la siguiente tabla se identifica al docente a **honorarios** con sus resultados según las habilidades, no se incluyen a docentes que no contestaron el Instrumento **(Perfil 6.1)** y aquellos no perciben debilidades en su quehacer docente **(Perfil 0)**:
+
+```{r TAB_LISTA_CLASS_PERFIL_DIRECCION_Habilidad_h, echo = FALSE}
+TAB_LISTA_CLASS_PERFIL_DIRECCION_Habilidad_h
+```
+
+En la siguiente tabla se identifica al docente **planta/contrata** con sus resultados según las habilidades, no se incluyen a docentes que no contestaron el Instrumento **(Perfil 10.1)** y aquellos que no la dirección no perciba debilidades en su quehacer docente **(Perfil 0)**:
+
+```{r TAB_LISTA_CLASS_PERFIL_DIRECCION_Habilidad_pc, echo = FALSE}
+TAB_LISTA_CLASS_PERFIL_DIRECCION_Habilidad_pc
+```
+
+\newpage
+
+# Coberturas de Dirección
+
+Respecto a la participación en el Instrumento, de un total de `r total_direccion` docentes, contestaron `r finalizado_direccion`, equivalentes al `r cobertura_direccion`%.
+
+```{r gráfico_direccion, echo=FALSE}
+gráfico_direccion
+```
+
+**Honorarios**
+
+Del total de `r ddt_h` docentes registrados para la carrera, contestaron `r ddf_h`, equivalentes al `r ddp_h`%.
+
+**Planta/Contrata**
+
+Del total de `r ddt` docentes registrados para la carrera, contestaron `r ddf`, equivalentes al `r ddp`%.
+
+\newpage
+
+# Instrumento de Autoevaluación
+
+La autoevaluación docente mide las siguientes habilidades declaradas en el Perfil:
+
+*h1:* Demuestra dominio teórico y práctico de su disciplina y procura su cultivo en forma progresiva.
+
+*h2:* Comunica ideas, argumentos y conocimiento de forma clara, eficaz y en coherencia con los principios y valores institucionales.
+
+*h3:* Organiza la enseñanza-aprendizaje centrada en el estudiante.
+
+*h4:* Diversifica la enseñanza según contextos específicos (modalidad formativa).
+
+*h5:* Implementa el proceso de enseñanza aprendizaje en concordancia con el nivel de desarrollo de competencias de los planes formativos y según modalidad formativa.
+
+*h7:* Promueve un clima de aceptación, confianza y respeto.
+
+*h8:* Contribuye a la reflexión pedagógica y disciplinar colectiva e individual.**(Docente Planta/Contrata)**
+
+*h9:* Realizo contribuciones a la práctica docente y/o al plan formativo, considerando el enfoque a la mejora continua de mi quehacer en el aula, en relación al proceso de enseñanza-aprendizaje, así como la participación en las instancias de la carrera que apunten a esto.**(Solo Planta/Contrata)**
+
+*h10:* Recoge información teórica y práctica que le permiten comprender y mejorar su práctica. **(Solo Planta/Contrata)**
+
+*h12:* Sistematiza resultados de sus procesos de reflexión o investigación respecto de experiencias o prácticas educativas de su disciplina. **(Solo Planta/Contrata)**
+
+Es importante señalar que los docentes honorarios no contestan preguntas relacionadas con la competencia indagador **(H8, H9, H10 Y H12)**.
+
+\newpage
+
+# Perfiles de Habilidades: Docentes Honorarios
+
+**Perfil 0:** Es la o el docente que percibe no tener debilidades de acuerdo con las habilidades declaradas en el Perfil.
+
+**Perfil 1:** Es la o el docente que percibe tener al menos una debilidad de siete habilidades declaradas en el Perfil, en especial *H1(Dominio Teórico Practico)* o *H3(Organización)*. (1/5)
+
+**Perfil 4:** Es la o el docente que percibe tener al menos cuatro debilidades de siete habilidades declaradas en el Perfil, en especial **H1 (Dominio Teórico Practico)**, **H2 (Comunicación)**,**H3 (Organización)** y **(H4 Diversificación)**. (1/4)
+
+**Perfil 6:** Es la o el docente que percibe tener debilidades en todas las habilidades del perfil. (6/6)
+
+**Perfil 6.1:** Es la o el docente que no contesta el Instrumento de Autoevaluación.
+
+\newpage
+
+# Perfiles de Habilidades: Docentes Planta/Contrata
+
+**Perfil 0:** Es la o el docente que percibe no tener debilidades de acuerdo con las habilidades declaradas en el Perfil.
+
+**Perfil 1:** Es la o el docente que percibe tener al menos una debilidad de siete habilidades declaradas, en especial *H10(Recopilación)* o *H12(Sistematización)*. (1/10)
+
+**Perfil 2:** Es la o el docente que percibe tener al menos dos debilidades con las siete habilidades declaradas en el Perfil, en especial *H10 (Recopilación)* y *H12(Sistematización)*.(2/10)
+
+**Perfil 3:** Es la o el docente que percibe tener al menos tres debilidades de las siete habilidades declaradas en el Perfil, en especial *H10 (Recopilación)* y *H12(Sistematización)*. (3/10)
+
+**Perfil 4:** Es la o el docente que percibe tener todas las habilidades asociadas a la competencia indagador débiles. *H8 (Contribución a la Reflexión), H9 (Contribución al Plan Formativo), H10(Recopilación) y H12(Sistematización)* (4/10)
+
+**Perfil 10.1:** Es la o el docente que no contesta el Instrumento de Autoevaluación.
+
+Se entiende como una habilidad débil con resultado menor o igual a 1,5, de una escala que inicia desde el 0 y finaliza en 3.
+
+\newpage
+
+# Resultados de Habilidades
+
+En la siguiente tabla se identifica al docente a honorarios por carrera, con su respectivo rut y nombre completo **(Docente)**, si realizó la autoevaluación **(AF(%) - 100 % lo realizó, 0 % No lo realizó)**, el código de carrera **(Código)**, nombre de carrera **(Carrera)** y su clasificación **(Revisar: Perfiles de Habilidades: Docentes Honorarios)**.
+
+No se incluyen los docentes con **Perfil 0**.
+
+```{r TAB_LISTA_CLASS_PERFIL_AUTOEVALUACION_HONORARIO, echo=FALSE}
+TAB_LISTA_CLASS_PERFIL_AUTOEVALUACION_HONORARIO
+```
+
+En la siguiente tabla se identifica al docente **Planta/Contrata** por carrera, con su respectivo rut y nombre completo **(Docente)**, si realizó la autoevaluación **(AF(%) - 100 % lo realizó, 0 % No lo realizó)**, el código de carrera **(Código)**, nombre de carrera **(Carrera)** y su clasificación **(Revisar: Perfiles de Habilidades: Docentes Planta/Contrata)**.
+
+No se incluye a los docentes con **Perfil 0**.
+
+```{r TAB_LISTA_CLASS_PERFIL_AUTOEVALUACION_PC,echo=FALSE}
+TAB_LISTA_CLASS_PERFIL_AUTOEVALUACION_PC
+```
+
+En la siguiente tabla se identifica al docente a **honorarios** con sus resultados según habilidad, no se incluyen a docentes que no contestaron el Instrumento **(Perfil 6.1)** y/o no perciben debilidades en su quehacer docente **(Perfil 0)**:
+
+```{r tab_listas_class_habilidad_ah, echo = FALSE}
+tab_listas_class_habilidad_ah
+```
+
+En la siguiente tabla se identifica al docente **planta/contrata** con sus resultados según habilidad,no se incluyen a docentes que no contestaron el Instrumento **(Perfil 10.1)** y/o no perciben debilidades en su quehacer docente **(Perfil 0)**:
+
+```{r tab_listas_class_habilidad_a, echo = FALSE}
+tab_listas_class_habilidad_a
+```
+
+\newpage
+
+# Coberturas Autoevaluación
+
+Respecto a la participación en el Instrumento, de un total de `r total_autoevaluacion` docentes, contestaron `r finalizado_autoevaluacion`, equivalentes al `r cobertura_autoevaluacion`%.
+
+```{r grafico_autoevaluacion, echo = FALSE}
+grafico_autoevaluacion
+```
+
+**Honorarios**
+
+Del total de `r adt_h` docentes registrados para la carrera, contestaron `r adf_h`, equivalentes al `r adp_h`%.
+
+**Planta/Contrata**
+
+Del total de `r adt` docentes registrados para la carrera, contestaron `r adf`, equivalentes al `r adp`%.
